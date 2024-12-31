@@ -1,18 +1,24 @@
-import React from "react";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import "./index.css";
-import { BrowserRouter } from "react-router-dom";
+import { routeTree } from "./routeTree.gen";
 
-import { TempoDevtools } from "tempo-devtools";
-TempoDevtools.init();
+const router = createRouter({ routeTree });
 
-const basename = import.meta.env.BASE_URL;
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter basename={basename}>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+// Render the app
+const rootElement = document.getElementById("root")!;
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>
+  );
+}
